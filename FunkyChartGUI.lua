@@ -466,10 +466,10 @@ end
 
 function Init()
     loadSetup()
-    loadGUI()
-
-    Announce("Script Loaded", "Welcome to FunkyChart!", 10, "main")
     Data("l")
+
+    loadGUI()
+    Announce("Script Loaded", "Welcome to FunkyChart!", 10, "main")
 end
 
 local errorLagBool
