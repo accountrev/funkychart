@@ -236,6 +236,7 @@ function loadChart(chart, silent)
         return
     else
         console("CHART WAS FOUND! Now reading chart...")
+
         loadstring(readfile(chart))()
     end
 
@@ -477,6 +478,7 @@ function loadGUI()
         status, errorDesc = pcall(loadChart, chartLink)
         if not status then
             errorHandler(errorDesc)
+            Announce("Older Chart?", "Remember, charts that were converted from an update in the past will not play and requires re-converting.", 10, "error")
         end
     end)
 
