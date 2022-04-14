@@ -31,6 +31,14 @@
 !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
 !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
 
+[VERSION 1.11]
+
+-   Made major changes to chart converting again (all chart before 1.11 are again invalid lol)
+-   Added a feature where you can now name the chart file when converting!
+-   Added a waiting screen when converting (this is to make people not click too early when its converting).
+
+
+
 [VERSION 1.1]
 
 -   Made major changes to chart converting (all charts before 1.1 are now invalid, sorry :( )
@@ -98,7 +106,8 @@ windowTemp = tk.Tk()
 windowTemp.withdraw()
 
 
-version = "v1.1"
+version = "v1.11"
+acceptableVersion = "v1.11"
 
 
 # FunkyChart Logo
@@ -123,7 +132,7 @@ difficultyList = [] # Difficulty
 hitobjList = []     # HitObjects
 
 # This dictionary is used to hold the chart information for later
-chartDictionary = {"chartName" : "", "chartSongArtist" : "", "chartAuthor" : "", "chartDifficulty" : "", "chartConverter" : "", "fontColor" : "255, 255, 255", "audio" : ""}
+chartDictionary = {"chartName" : "", "chartSongArtist" : "", "chartAuthor" : "", "chartDifficulty" : "", "chartConverter" : "", "fontColor" : "255, 255, 255", "audio" : "", "fileName" : "chart"}
 
 # Checks to make sure the .osu file contains all the required data
 generalChecks = {"Mode" : False}
@@ -177,9 +186,11 @@ def errorHandler(error, additionalInfo = "", exiting=True):
     elif error == 9:
         print(colorDict["R"] + '\nThis beatmap is missing a key component in the Difficulty section. Try again and refer to this dictionary or try another beatmap.\n\n' + colorDict["W"] + 'difficultyChecks = ' + additionalInfo + "\n\nERROR 09")
     elif error == 10:
-        print(colorDict["R"] + '\nSomething went wrong while parsing the notes. Please try again or choose a different beatmap.' + colorDict["W"] + "\n\nERROR 09")
+        print(colorDict["R"] + '\nSomething went wrong while parsing the notes. Please try again or choose a different beatmap.' + colorDict["W"] + "\n\nERROR 10")
 #   elif error == 11:
 #       print(colorDict["R"] + '\nYou can only enter numeric characters (aka the audio ID you are using). Please try again.' + colorDict["W"] + "\n\nERROR 10")
+    elif error == 12:
+        print(colorDict["R"] + '\nInvalid name, only use alphabet characters and a limit of 16 characters. Please try again.' + colorDict["W"] + "\n\nERROR 12")
     
     if exiting:
         print(colorDict["R"] + '\n\nClosing in 20 seconds...' + colorDict["W"])
@@ -259,6 +270,18 @@ def inputSys(mode):
     #        else:
     #            cls()
     #            errorHandler(11, exiting = False)
+
+    # Only allows 16 characters and alphabet characters
+    if mode == 4:
+        while True:
+            input1 = input("# ")
+
+            if len(input1) <= 16 and input1.isalpha():
+                return input1
+            else:
+                cls()
+                errorHandler(12, exiting = False)
+                continue
         
 
 
@@ -407,15 +430,19 @@ def convertChartToFF(filePath):
     noteLocationDictionary = {"64" : "0", "192" : "1", "320" : "2", "448" : "3"}
     counter = 1
 
-    with open(r"" + filePath + "/" + chartDictionary["chartConverter"] + "_" + chartDictionary["chartName"] + "_" + str(time.time()) + ".lua", "w") as file:
+    cls()
+    print("Converting to " + filePath + "...\nDO NOT CLOSE THE CONVERTER!")
+
+    with open(r"" + filePath + "/" + chartDictionary["chartConverter"] + "-" + chartDictionary["fileName"] + "_DONOTEDIT-OR-EXECUTE" + ".lua", "w") as file:
 
         # Beginning of the file - puts info about the chart (name, author, difficulty, etc.)
-        file.writelines(["data.chartData = {\n",
-                        "chartName = \"" + chartDictionary["chartName"] + "\",\n",
-                        "chartAuthor = \"" + chartDictionary["chartSongArtist"] + "\",\n",
+        file.writelines(["data.versions.loadingVersion = \"" + acceptableVersion + "\"\n\n",
+                        "data.chartData = {\n",
+                        "chartName = [[" + chartDictionary["chartName"] + "]],\n",
+                        "chartAuthor = [[" + chartDictionary["chartSongArtist"] + "]],\n",
                         "chartNameColor = \"<font color=\'rgb(" + chartDictionary["fontColor"] + ")\'>%s</font>\",\n",
-                        "chartDifficulty = \"" + chartDictionary["chartAuthor"] + "\'s " + chartDictionary["chartDifficulty"] + "\",\n",
-                        "chartConverter = \"" + chartDictionary["chartConverter"] + "\",\n"])
+                        "chartDifficulty = [[" + chartDictionary["chartAuthor"] + "\'s " + chartDictionary["chartDifficulty"] + "]],\n",
+                        "chartConverter = [[" + chartDictionary["chartConverter"] + "]],\n"])
 
 
         # Different actions wheter the user chose Online or Local mode.
@@ -451,7 +478,7 @@ def convertChartToFF(filePath):
 
                 if counter != len(hitobjList):
                     convertedLine = convertedLine + ","
-                    # print(counter, convertedLine, "NINE")
+                    #print(counter, convertedLine, "NINE")
 
                 counter += 1
 
@@ -470,7 +497,7 @@ def convertChartToFF(filePath):
 
                 if counter != len(hitobjList):
                     convertedLine = convertedLine + ","
-                    # print(counter, convertedLine, "TEN")
+                    #print(counter, convertedLine, "TEN")
 
                 counter += 1
 
@@ -481,6 +508,9 @@ def convertChartToFF(filePath):
 
         #if mode == "l":
         #    file.write("loadstring(game:HttpGet(\"https://raw.githubusercontent.com/accountrev/funkychart/main/LocalOnly.lua\", true))()")
+
+        
+        time.sleep(3)
 
         cls()
         print("Saved to " + filePath + "!")
@@ -508,6 +538,11 @@ def startProcedure():
     # Chart creating starts here
     parseOsuBeatmap(filename)
     chartCreationAndValidation()
+
+    # Naming the saved file
+    cls()
+    print(colorDict["G"] + "Now, name your saved file.\n")
+    chartDictionary["fileName"] = inputSys(4)
 
     # Saving the finished product - uses tkinter's askdirectory function
     cls()
