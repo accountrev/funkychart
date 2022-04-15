@@ -446,6 +446,13 @@ function loadGUI()
     local GUISec = Options:NewSection("GUI")
     local OtherSec = Options:NewSection("Other")
 
+    local KeyBinds = Window:NewTab("Keybinds")
+    local KeyBindsSec = KeyBinds:NewSection("Keybinds")
+    
+    local ToggleUIKeybind = KeyBindsSec:NewKeybind("Toggle UI", "Hides and unhides the UI.", Enum.KeyCode.RightAlt, function()
+        Library:ToggleUI()
+    end)
+
     local Credits = Window:NewTab("Credits")
 
     local Issues = Window:NewTab("Issues?")
