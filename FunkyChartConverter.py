@@ -97,6 +97,7 @@ import colorama as clr
 import tkinter as tk
 from tkinter import filedialog as fd
 import shutil
+from random import randint
 
 # Required for the colored text to work
 clr.init()
@@ -106,8 +107,8 @@ windowTemp = tk.Tk()
 windowTemp.withdraw()
 
 
-version = "v1.11"
-acceptableVersion = "v1.11"
+version = "v1.12"
+acceptableVersion = "v1.12"
 
 
 # FunkyChart Logo
@@ -132,7 +133,16 @@ difficultyList = [] # Difficulty
 hitobjList = []     # HitObjects
 
 # This dictionary is used to hold the chart information for later
-chartDictionary = {"chartName" : "", "chartSongArtist" : "", "chartAuthor" : "", "chartDifficulty" : "", "chartConverter" : "", "fontColor" : "255, 255, 255", "audio" : "", "fileName" : "chart"}
+chartDictionary = {"chartName" : "",
+                   "chartSongArtist" : "",
+                   "chartAuthor" : "",
+                   "chartDifficulty" : "",
+                   "chartConverter" : "",
+                   "fontColor" : "255, 255, 255",
+                   "audio" : "",
+                   "fileName" : "chart",
+                   "additionalID" : "",
+                   "additionalIDType" : "none"}
 
 # Checks to make sure the .osu file contains all the required data
 generalChecks = {"Mode" : False}
@@ -141,16 +151,24 @@ difficultyChecks = {"CircleSize" : False}
 hitobjChecks = {"Valid" : False}
 
 # Color dictionary (makes it easier to add color instead of remembering the exact code)
-colorDict = {"R" : clr.Fore.LIGHTRED_EX + clr.Style.BRIGHT, "W" : clr.Fore.WHITE + clr.Style.BRIGHT, "G" : clr.Fore.LIGHTGREEN_EX + clr.Style.BRIGHT, "Y" : clr.Fore.LIGHTYELLOW_EX + clr.Style.BRIGHT}
+colorDict = {"R" : clr.Fore.LIGHTRED_EX + clr.Style.BRIGHT,
+             "W" : clr.Fore.WHITE + clr.Style.BRIGHT,
+             "G" : clr.Fore.LIGHTGREEN_EX + clr.Style.BRIGHT,
+             "Y" : clr.Fore.LIGHTYELLOW_EX + clr.Style.BRIGHT}
+
+additionalIDDict = {1 : "image",
+                    2 : "video",
+                    3 : "none"}
 
 # Filetypes for tkinter
 osuFiletype = [('osu! beatmap file', "*.osu")]
 audioFiletype = (('MP3', "*.mp3"), ('WAV', "*.wav"))
 txtFiletype = [('Text File', "*.txt")]
+imageFiletype = (('PNG', "*.png"), ('JPG', "*.jpg"))
+videoFiletype = (('MP4', "*.mp4"), ('WEBM', "*.webm"))
 
 
 # Clear console and prints logo (thx stackoverflow!)
-
 debugEnableCLS = True
 
 def cls():
@@ -187,8 +205,8 @@ def errorHandler(error, additionalInfo = "", exiting=True):
         print(colorDict["R"] + '\nThis beatmap is missing a key component in the Difficulty section. Try again and refer to this dictionary or try another beatmap.\n\n' + colorDict["W"] + 'difficultyChecks = ' + additionalInfo + "\n\nERROR 09")
     elif error == 10:
         print(colorDict["R"] + '\nSomething went wrong while parsing the notes. Please try again or choose a different beatmap.' + colorDict["W"] + "\n\nERROR 10")
-#   elif error == 11:
-#       print(colorDict["R"] + '\nYou can only enter numeric characters (aka the audio ID you are using). Please try again.' + colorDict["W"] + "\n\nERROR 10")
+    elif error == 11:
+        print(colorDict["R"] + '\nYou can only enter numeric characters 1 through 3. Please try again.' + colorDict["W"] + "\n\nERROR 11")
     elif error == 12:
         print(colorDict["R"] + '\nInvalid name, only use alphabet characters and a limit of 16 characters. Please try again.' + colorDict["W"] + "\n\nERROR 12")
     
@@ -228,6 +246,14 @@ def filterSound(list):
 
     return list
 
+
+def getNewDirectoryLink(dir, base, extension):
+
+    return os.path.join(audioFileNameDict["directory"], )
+
+    audioFileName, extension = os.path.splitext(fileName)
+    new_name = os.path.join(basedir, base, fileName)
+
 # Closed input system, with different modes for different requirements
 # If a requirement is not met, then the user will get redirected to errorHandler.
 def inputSys(mode):
@@ -260,16 +286,16 @@ def inputSys(mode):
                 errorHandler(1, exiting = False)
                 continue
     
-    # Can only allow numbers
-    #if mode == 3:
-    #    while True:
-    #        input1 = input("# ")
+    # Can only allow numbers 1 - 3
+    if mode == 3:
+        while True:
+            input1 = input("# ")
 
-    #        if input1.isnumeric():
-    #            return input1
-    #        else:
-    #            cls()
-    #            errorHandler(11, exiting = False)
+            if input1.isnumeric() and int(input1) >= 1 and int(input1) <= 3:
+                return input1
+            else:
+                cls()
+                errorHandler(11, exiting = False)
 
     # Only allows 16 characters and alphabet characters
     if mode == 4:
@@ -428,6 +454,8 @@ def convertChartToFF(filePath):
     # some of code was written in early 2021, so it needs optimizing
 
     noteLocationDictionary = {"64" : "0", "192" : "1", "320" : "2", "448" : "3"}
+    noteLocationList = ["64", "192", "320", "448"]
+
     counter = 1
 
     cls()
@@ -455,7 +483,11 @@ def convertChartToFF(filePath):
 
         file.writelines(["\nloadedAudioID = \"FunkyChart/Audio/" + chartDictionary["audio"].split("/")[-1] + "\","])
 
-
+        if chartDictionary["additionalIDType"] != "none":
+            file.writelines(["\nadditionalID = \"FunkyChart/Assets/" + chartDictionary["additionalID"].split("/")[-1] + "\","])
+            file.writelines(["\nadditionalIDType = \"" + chartDictionary["additionalIDType"] + "\","])
+        else:
+            file.writelines(["\nadditionalIDType = \"none\","])
 
         # Beginning of chart notes
         file.write("\n\nchartNotes = {\n")
@@ -464,6 +496,10 @@ def convertChartToFF(filePath):
         for note in hitobjList:
 
             hitObject = filterSound(note.strip("\n").replace(":", ",").split(","))
+
+            if hitObject[0] not in noteLocationList:
+                continue
+
 
             # Normal Note
             if len(hitObject) == 9:
@@ -503,7 +539,11 @@ def convertChartToFF(filePath):
 
                 file.write(convertedLine + "\n")
 
-        file.write("}\n}")
+        file.write("}\n}\n\n")
+
+        if chartDictionary["additionalIDType"] != "none":
+            file.writelines("data.underframe.enabled = true")
+
         file.close()
 
         #if mode == "l":
@@ -520,10 +560,6 @@ def convertChartToFF(filePath):
 
 # The "beginning" of the program
 def startProcedure():
-
-    # The user can choose between Online and Local mode.
-    #print(colorDict["G"] + "Choose your intended mode\n(O)nline mode or (L)ocal mode?" + colorDict["W"] + "\n\nOnline mode allows you to use Roblox audio IDs for audio and can be shared on the internet easily.\n(Recommended)\n\nLocal mode allows you to use a specified audio file stored locally on your computer.\n(Synapse X ONLY)\n\nGo to the GitHub wiki to see all pros and cons.\n")
-    #mode = inputSys(1)
 
     # The username is required for crediting who converted it
     cls()
@@ -549,25 +585,10 @@ def startProcedure():
     print(colorDict["G"] + "Where would you want your converted file to be saved?")
     filePath = fd.askdirectory()
 
-    # Different actions for Online and Local mode (Online needs to put an audio ID, Local needs to select a sound file)
-    #if mode == "o":
-    #    cls()
-    #    print(colorDict["G"] + "Since you chose online mode, please enter the audio ID for this chart.")
-    #    chartDictionary["audio"] = inputSys(3)
-    #elif mode == "l":
-    #    cls()
-    #    print(colorDict["G"] + "Since you chose local mode, please select the mp3 file that will go with the chart.")
-    #    chartDictionary["audio"] = fd.askopenfilename(title='Open an audio file', initialdir='C:/', filetypes=audioFiletype)
-
-    #    # Checks if the file is actually a file - should probably implement that for the first one as well...
-    #    if not os.path.isfile(chartDictionary["audio"]):
-    #        errorHandler(3)
-
     # Selecting audio for the chart
     cls()
     print(colorDict["G"] + "Please select the mp3 file that will go with the chart.")
     chartDictionary["audio"] = fd.askopenfilename(title='Open an audio file', initialdir='C:/', filetypes=audioFiletype)
-    print(chartDictionary["audio"])
 
     # Checks if the file is actually a file - should probably implement that for the first one as well...
     if not os.path.isfile(chartDictionary["audio"]):
@@ -582,6 +603,49 @@ def startProcedure():
     except (FileNotFoundError, shutil.SameFileError) as exception:
         cls()
         errorHandler(3)
+
+
+    cls()
+    print(colorDict["G"] + "Would you like to use a image, video, or nothing as your background?\n\n" + colorDict["W"] + "[1] Image\n[2] Video\n[3] None\n\nPlease type the number you want.")
+    additionalIDMode = inputSys(3)
+    chartDictionary["additionalIDType"] = additionalIDDict[int(additionalIDMode)]
+
+    if additionalIDMode == "1":
+        cls()
+        print(colorDict["G"] + "Please select the image file that will be the background.")
+        chartDictionary["additionalID"] = fd.askopenfilename(title='Open an image file', initialdir='C:/', filetypes=imageFiletype)
+
+        if not os.path.isfile(chartDictionary["additionalID"]):
+            errorHandler(3)
+
+        cls()
+        print(colorDict["G"] + "Where would you want the image file to be saved?")
+        additionalIDPath = fd.askdirectory()
+
+        try:
+            shutil.copy(chartDictionary["additionalID"], additionalIDPath)
+        except (FileNotFoundError, shutil.SameFileError) as exception:
+            cls()
+            errorHandler(3)
+    elif additionalIDMode == "2":
+        cls()
+        print(colorDict["G"] + "Please select the video file that will be the background.")
+        chartDictionary["additionalID"] = fd.askopenfilename(title='Open a video file', initialdir='C:/', filetypes=videoFiletype)
+
+        if not os.path.isfile(chartDictionary["additionalID"]):
+            errorHandler(3)
+
+        cls()
+        print(colorDict["G"] + "Where would you want the video file to be saved?")
+        additionalIDPath = fd.askdirectory()
+
+        try:
+            shutil.copy(chartDictionary["additionalID"], additionalIDPath)
+        except (FileNotFoundError, shutil.SameFileError) as exception:
+            cls()
+            errorHandler(3)
+    elif additionalIDMode == "3":
+        pass
 
     # You can change the color of the title in a song using RGB values. For example if your song is TTFAF, you can choose an orange or red color and it will look nice.
     cls()

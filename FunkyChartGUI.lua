@@ -6,7 +6,7 @@
      / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_  
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/
-    v1.11
+    v1.12
     Made with ♥ by accountrev          
 
     Thanks for downloading and using my script, if you're here to just use it once or plan to use it many times.
@@ -18,6 +18,16 @@
     !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
     !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
     !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
+
+    [VERSION 1.12]
+
+    - Added underframes, the ability to load image backgrounds or play video backgrounds while you play
+    - Underframe is currently a WIP feature, so things may break. If any problems, report them using the Issues? section on the GUI.
+    - Added manual loading, load charts just by using a local direct link to the chart.
+    - Added keybinds, currently there is one which is to hide the GUI
+
+    I will be taking a break from the project to study for my finals, and will be updating this later this May. Thanks for using FunkyChart everyone!
+
 
     [VERSION 1.11]
 
@@ -82,18 +92,17 @@
 
 --]]
 
-for _,v in pairs(game.CoreGui:GetChildren()) do
-    if v:FindFirstChild("Main") then
-        for __,vv in pairs(v.Main:GetChildren()) do
-            if vv.Name == "MainCorner" then
-                v:Destroy()
-            end
-        end
-    end
-end
+chartList = {}
 
+local errorLagBool, chartLink, currentlyloadedtext, status, errorDesc
 
-saveDataVersion = "1"
+local consoleEnabled = true
+
+local RS = game:GetService("RunService")
+local CAS = game:GetService("ContextActionService")
+local TS = game:GetService("TweenService")
+
+local saveDataVersion = "1"
 
 data = {
 
@@ -104,7 +113,9 @@ data = {
         chartAuthor = "None",
         chartDifficulty = "None",
         chartConverter = game.Players.LocalPlayer.Name,
-        loadedAudioID = ""
+        loadedAudioID = "",
+        additionalID = "",
+        additionalIDType = "none"
     },
 
     options = {
@@ -115,22 +126,36 @@ data = {
         version = saveDataVersion
     },
 
+    underframe = {
+        enabled = false,
+        override = false,
+        overrideAdditionalID = "",
+        overrideAdditionalIDType = "none",
+        overrideVideoLoop = false
+    },
+
     versions = {
         acceptedVersions = {
-            "v1.11"
+            "v1.12"
         },
         loadingVersion = ""
     }
 }
 
-chartList = {}
 
-local errorLagBool, chartLink, currentlyloadedtext, status, errorDesc
 
-local consoleEnabled = true
 
-local RS = game:GetService("RunService")
-local CAS = game:GetService("ContextActionService")
+function clearAllCurrentFCGuis()
+    for _,v in pairs(game.CoreGui:GetChildren()) do
+        if v:FindFirstChild("Main") then
+            for __,vv in pairs(v.Main:GetChildren()) do
+                if vv.Name == "MainCorner" then
+                    v:Destroy()
+                end
+            end
+        end
+    end
+end
 
 function console(message, before)
     if consoleEnabled then
@@ -146,6 +171,22 @@ function versionCheck(versionString)
         end
     end
     return false
+end
+
+function checkIfFileExists(link)
+    if not isfile(link) then
+        return false
+    else
+        return true
+    end
+end
+
+function checkIfFolderExists(link)
+    if not isfolder(link) then
+        return false
+    else
+        return true
+    end
 end
 
 function loadSetup()
@@ -168,20 +209,146 @@ function loadSetup()
     else
         console("ClientMusic Instance already created.")
     end
+end
 
-    if not game.Players.LocalPlayer.PlayerGui.GameUI.Arrows:FindFirstChild("ExtraUnderlay") then
-        underlay1 = Instance.new("Frame")
-        underlay1.Name = "ExtraUnderlay"
-        underlay1.AnchorPoint = Vector2.new(0.5, 0.5)
-        underlay1.Parent = game:GetService("Players").LocalPlayer.PlayerGui.GameUI.Arrows
-        underlay1.Size = UDim2.new(2, 0, 2, 0)
-        underlay1.Position = UDim2.new(0.5, 0, 0.5, 0)
-        underlay1.ZIndex = 0
-        underlay1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        underlay1.BackgroundTransparency = 0
-        underlay1.Visible = false
+function manageUnderframe(mode, typeOf, link, isVideoLooped, transparency)
+    typeOf = typeOf or "none"
+    link = link or ""
+    isVideoLooped = isVideoLooped or false
+    transparency = transparency or 0
+
+    function createVideo(a1, a2, a3)
+        video = Instance.new("VideoFrame")
+        video.Name = "VideoFrame"
+        video.AnchorPoint = Vector2.new(0.5, 0.5)
+        video.Parent = screenGui
+        video.Size = UDim2.new(1, 0, 1, 0)
+        video.Position = UDim2.new(0.5, 0, 0.5, 0)
+        video.ZIndex = 0
+        video.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        video.BackgroundTransparency = 0
+        video.BorderSizePixel = 0
+        video.Video = a1
+        video.Visible = true
+        video.Volume = 0
+        video.Looped = a2
+
+        cover = Instance.new("Frame")
+        cover.Name = "Cover"
+        cover.AnchorPoint = Vector2.new(0.5, 0.5)
+        cover.Parent = video
+        cover.Size = UDim2.new(1, 0, 1, 0)
+        cover.Position = UDim2.new(0.5, 0, 0.5, 0)
+        cover.ZIndex = 0
+        cover.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        cover.BackgroundTransparency = a3
+        cover.BorderSizePixel = 0
+        cover.Visible = true
+
+        console("Underframe applied, not waiting")
+
+        repeat wait() until game.SoundService.ClientMusic.IsPlaying
+
+        cover.BackgroundTransparency = 1
+        video:Play()
+    end
+
+    function createImage(a1, a2)
+        image = Instance.new("ImageLabel")
+        image.Name = "ImageUnderframe"
+        image.AnchorPoint = Vector2.new(0.5, 0.5)
+        image.Parent = screenGui
+        image.Size = UDim2.new(1, 0, 1, 0)
+        image.Position = UDim2.new(0.5, 0, 0.5, 0)
+        image.ZIndex = 0
+        image.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        image.BackgroundTransparency = a2
+        image.BorderSizePixel = 0
+        image.Visible = true
+        image.Image = a1
+
+        cover = Instance.new("Frame")
+        cover.Name = "Cover"
+        cover.AnchorPoint = Vector2.new(0.5, 0.5)
+        cover.Parent = image
+        cover.Size = UDim2.new(1, 0, 1, 0)
+        cover.Position = UDim2.new(0.5, 0, 0.5, 0)
+        cover.ZIndex = 0
+        cover.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        cover.BackgroundTransparency = 1
+        cover.BorderSizePixel = 0
+        cover.Visible = true
+    end
+
+    function createBlack(a1)
+        cover = Instance.new("Frame")
+        cover.Name = "Cover"
+        cover.AnchorPoint = Vector2.new(0.5, 0.5)
+        cover.Parent = screenGui
+        cover.Size = UDim2.new(1, 0, 1, 0)
+        cover.Position = UDim2.new(0.5, 0, 0.5, 0)
+        cover.ZIndex = 0
+        cover.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        cover.BackgroundTransparency = a1
+        cover.BorderSizePixel = 0
+        cover.Visible = true
+    end
+
+    
+    if mode == "create" then
+        repeat wait(0.1) until game.Players.LocalPlayer.PlayerGui.GameUI.Arrows.Visible == true
+
+        screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "Underframe"
+        screenGui.DisplayOrder = -10
+        screenGui.IgnoreGuiInset = true
+        screenGui.Parent = game.Players.LocalPlayer.PlayerGui
+        screenGui.ResetOnSpawn = false        
+
+        if typeOf == "image" then
+            if data.underframe.override then
+                createImage(data.underframe.overrideAdditionalID, transparency)
+            else
+                createImage(link, transparency)
+            end
+
+            console("Underframe (img) applied")
+            return
+
+        elseif typeOf == "video" then
+            if data.underframe.override then
+                createVideo(data.underframe.overrideAdditionalID, data.underframe.overrideVideoLoop, transparency)
+            else
+                createVideo(link, isVideoLooped, transparency)
+            end
+
+            console("Underframe (vid) applied")
+            return
+
+
+        elseif typeOf == "none" then
+            if data.underframe.override then
+                createVideo(transparency)
+            else
+                createVideo(transparency)
+            end
+
+            console("Underframe (black) applied")
+            return
+        else
+            console("Nothing was given.")
+        end
+
+
+    elseif mode == "remove" then
+
+        if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Underframe") then
+            game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Underframe"):Destroy()
+        else
+            console("No underframe available")
+        end
     else
-        console("Underlay already created")
+        console("Account (the developer) was on crack and this somehow happened.")
     end
 end
 
@@ -212,16 +379,36 @@ function Announce(messagetitle, messagebody, duration, type)
 	sound:Destroy()
 end
 
-Announce("Script Loaded", "Welcome to FunkyChart!", 10, "main")
+function dp(x)
 
-function errorHandler(errorMessage)
-    Announce("A critical error occured!", errorMessage .. "\nPlease report this!", 100, "error")
-    console("[CRITICAL ERROR] " .. errorMessage .. "\nPlease report this!", "\n\n\n")
+    startgui = game:GetService("StarterGui")
+
+    startgui:SetCore("SendNotification", {
+        Title = "Debug";
+        Text = tostring(x);
+        Duration = 100;
+        Button1 = "Close";
+    })
 end
 
-function loadChart(chart, silent)
+function tweenMove(toPoint)
+    local goal1 = {}
+    goal1.CFrame = toPoint
+
+	local tweenInfo = TweenInfo.new(0.5)
+
+	local tween = TS:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, tweenInfo, goal1)
+	
+	tween:Play()
+
+    tween.Completed:Wait()
+end
+
+
+function loadChart(chart, silent, fromGUI)
     chart = chartLink or data.options.lastplayed
     silent = silent or false
+    fromGUI = fromGUI or false
 
     console("[LOADING SONG " .. chart .. " WITH silent = " .. tostring(silent) .. "]", "\n\n")
     console("Checking if chart is nil (meaning if a chart is selected)")
@@ -230,14 +417,21 @@ function loadChart(chart, silent)
         console("ERROR - NO CHART WAS SELECTED, ignoring request...")
         Announce("No chart selected", "Select a chart from the list.", 10, "error")
         return
-    elseif not isfile(chart) then
-        console("ERROR - " .. chart .. " does not exist in FunkyChart/Charts!")
-        Announce("Error", chart .. " does not exist!", 10, "error")
-        return
-    else
-        console("CHART WAS FOUND! Now reading chart...")
+    end
 
+    if checkIfFileExists(chart) then
+        console("CHART WAS FOUND! Now reading chart...")
         loadstring(readfile(chart))()
+    else
+        if fromGUI then
+            console("ERROR - " .. chart .. " does not exist in FunkyChart/Charts!")
+            Announce("Error", chart .. " does not exist! Was it possibly removed or did the name change?", 10, "error")
+        else
+            console("ERROR - " .. chart .. " was not found after save in FunkyChart/Charts! Was it possibly removed or did the name change?")
+            Announce("Saved Chart Missing", chart .. " was not found after last save! Was it possibly removed or did the name change?", 10, "error")
+        end
+
+        return
     end
 
     console("CHART READ! Now validating chart...")
@@ -252,12 +446,9 @@ function loadChart(chart, silent)
         Announce("No executor selected", "Select an executor to load a song.", 10, "error")
         resetData("customChart")
         return
-    elseif not isfile(data.chartData.loadedAudioID) then
-        console("ERROR - No Audio Found! " .. data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ".")
-        Announce("No Audio Found!", data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ".", 10, "error")
-        resetData("customChart")
-        return
-    else
+    end
+
+    if checkIfFileExists(data.chartData.loadedAudioID) then
         if data.options.executor == "Synapse" then
             console("Synapse mode")
             data.chartData.loadedAudioID = getsynasset(data.chartData.loadedAudioID)
@@ -268,75 +459,132 @@ function loadChart(chart, silent)
 
         game.SoundService.ClientMusic.SoundId = data.chartData.loadedAudioID
         data.options.lastplayed = chart
-
-        if not silent then
-            Announce("Song Loaded", data.chartData.chartName .. " - " .. data.chartData.chartAuthor, 10, "loaded")
-            Data("s")
+    else
+        if fromGUI then
+            console("ERROR - No Audio Found! " .. data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ".")
+            Announce("No Audio Found!", data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ". Was it possibly removed or did the name change?", 10, "error")
+            resetData("customChart")
+            return
+        else
+            console("ERROR - No Audio Found from save! " .. data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ".")
+            Announce("No Audio Found!", data.chartData.loadedAudioID .. " cannot be found for " .. chart .. ". Was it possibly removed or did the name change after save?", 10, "error")
+            resetData("customChart")
+            return
         end
+    end
 
-        console("CHART SUCESSFULLY LOADED!")
+    if data.underframe.enabled then
+        if checkIfFileExists(data.chartData.additionalID) then
+            if data.options.executor == "Synapse" then
+                console("Synapse mode for additional ID")
+                data.chartData.additionalID = getsynasset(data.chartData.additionalID)
+            elseif data.options.executor == "Krnl" then
+                console("Krnl mode for additional ID")
+                data.chartData.additionalID = getcustomasset(data.chartData.additionalID)
+            end
+        else
+            console("ERROR - Additional ID not Found! " .. data.chartData.additionalID .. " cannot be found.")
+            Announce("Additional ID not Found!", data.chartData.additionalID .. " cannot be found and will be skipped to prevent errors", 10, "error")
+            data.chartData.additionalIDType = "none"
+        end
+    end
+
+    if not silent then
+        Announce("Song Loaded", data.chartData.chartName .. " - " .. data.chartData.chartAuthor, 10, "loaded")
+        functionHandler(Data, "s")
+    end
+    console("CHART SUCESSFULLY LOADED!")
+end
+
+function saveFile(saving, fileName)
+    console("Saving data...")
+
+    if (writefile) then
+        local json = game:GetService("HttpService"):JSONEncode(saving)
+        writefile(fileName, json)
+        Announce("Save Data Saved", "Your options data has been saved!", 10, "main")
+        console("Data saved.")
+    else
+        console("No save function found.")
     end
 end
 
-function Data(mode)
+function loadData(fileName)
+    console("Checking if data exists...")
+    if (readfile and isfile and checkIfFileExists(fileName)) then
+        console("FILE EXISTS! Now checking if save data is up to date...")
+        data.options = game:GetService("HttpService"):JSONDecode(readfile(fileName))
+        
+        if data.options.version ~= saveDataVersion then
+            console("Save data is not up to date and can cause problems. Forcing reset...")
+            Announce("Old Save Data", "Your save data was not up to date. Resetting.", 1, "error")
+            functionHandler(Data, "r")
+            return
+        else
+            console("Save data is up to date.")
+            Announce("Save Data Loaded", "Welcome back " .. game.Players.LocalPlayer.Name .. "!", 10, "main")
+            functionHandler(loadChart, data.options.lastplayed, true, false)
+            Announce("Loaded Last Played Chart", data.chartData.chartName .. " - " .. data.chartData.chartAuthor, 10, "loaded")
+            console("Data and chart loaded.")
+            
+            for _,v in pairs(data.chartData) do
+                console(tostring(v))
+            end
 
+            for _,v in pairs(data.options) do
+                console(tostring(v))
+            end
+        end
+    else
+        console("Could not find current data.")
+        Announce("Save Data not found", "Load a song to create your save data.", 10, "main")
+    end
+end
+
+function resetSave(filename)
+    console("Deleting current data...")
+    Announce("Deleting", "Deleting save data...", 10, "main")
+    delfile(filename)
+    --loadstring(game:HttpGet(('https://raw.githubusercontent.com/accountrev/funkychart/master/FunkyChartGUI.lua')))()
+end
+
+function Data(mode)
     local foldername = "FunkyChart"
     local datafilename = "FunkyChartVersion2.txt"
     local audiofoldername = foldername .. "/Audio"
     local chartfoldername = foldername .. "/Charts"
+    local assetsfoldername = foldername .. "/Assets"
 
-    if not isfolder(foldername) then
+    if checkIfFolderExists(foldername) then
+
+        if checkIfFolderExists(audiofoldername) then makefolder(foldername) end
+        if checkIfFolderExists(chartfoldername) then makefolder(chartfoldername) end
+        if checkIfFolderExists(assetsfoldername) then makefolder(assetsfoldername) end
+
+        if mode == "s" then
+            saveFile(data.options, datafilename)
+        elseif mode == "l" then
+            loadData(datafilename)
+        elseif mode == "r" then
+            resetSave(datafilename)
+        end
+    else
         makefolder(foldername)
         makefolder(audiofoldername)
         makefolder(chartfoldername)
-    else
-        if mode == "s" then
-            console("Saving data...")
-            local json
-            if (writefile) then
-                json = game:GetService("HttpService"):JSONEncode(data.options)
-                writefile(datafilename, json)
-                Announce("Save Data Saved", "Your options data has been saved!", 10, "main")
-            end
-            console("Data saved.")
-        elseif mode == "l" then
-            console("Checking if data exists...")
-            if (readfile and isfile and isfile(datafilename)) then
-                console("FILE EXISTS! Now checking if save data is up to date...")
-                data.options = game:GetService("HttpService"):JSONDecode(readfile(datafilename))
-                
-                if data.options.version ~= saveDataVersion then
-                    console("Save data is not up to date and can cause problems. Forcing reset...")
-                    Announce("Old Save Data", "Your save data was not up to date. Resetting.", 1, "error")
-                    Data("r")
-                    return
-                else
-                    console("Save data is up to date.")
-                    Announce("Save Data Loaded", "Welcome back " .. game.Players.LocalPlayer.Name .. "!", 10, "main")
-                    loadChart(data.options.lastplayed, true)
-                    Announce("Loaded Last Played Chart", data.chartData.chartName .. " - " .. data.chartData.chartAuthor, 10, "loaded")
-                    console("Data and chart loaded.")
-                    
-                    for _,v in pairs(data.chartData) do
-                        console(tostring(v))
-                    end
+        makefolder(assetsfoldername)
 
-                    for _,v in pairs(data.options) do
-                        console(tostring(v))
-                    end
-                end
-            else
-                console("Could not find current data. New user or reset?")
-                Announce("First Time?", "Looks like you don't have any save data. Load a song to start!", 10, "main")
-            end
-        elseif mode == "r" then
-            console("Deleting current data...")
-            Announce("Deleting", "Deleting save data...", 10, "main")
-            delfile(datafilename)
-            loadstring(game:HttpGet(('https://raw.githubusercontent.com/accountrev/funkychart/master/FunkyChartGUI.lua')))()
-        end
+        Announce("First Time?", "Looks like you don't have any save data. Load a song to start!", 10, "main")
     end
 end
+
+
+
+
+
+
+
+
 
 function resetData(choice)
     console("Full data reset initialized for " .. choice)
@@ -364,6 +612,9 @@ function resetData(choice)
 end
 
 
+
+
+
 function Chart(preventErrorLag)
     preventErrorLag = preventErrorLag or false
 
@@ -386,14 +637,18 @@ function Chart(preventErrorLag)
                     end
 
                     local stagepos = stagesArray[math.random(#stagesArray)].Zone.CFrame
-                    local currentpos = game.Players.LocalPlayer.Character.HumanoidRootPart
-                    
-                    currentpos.CFrame = stagepos
+
+                    tweenMove(stagepos)
                 end
-                
+
                 funky.SongPlayer:StartSong("FNF_Bopeebo", data.options.side, "Hard", {game.Players.LocalPlayer})
 
-                print(data.options.side)
+                if data.underframe.enabled then
+                    task.spawn(function()
+                        functionHandler(manageUnderframe, "create", data.chartData.additionalIDType, data.chartData.additionalID)
+                    end)
+                end
+                
 
                 funky.SongPlayer.CurrentSongData = data.chartData.chartNotes
                 funky.Songs.FNF_Bopeebo.Title = data.chartData.chartName
@@ -401,11 +656,14 @@ function Chart(preventErrorLag)
                 funky.SongPlayer.TopbarAuthor = "By: " .. data.chartData.chartAuthor .. "\nConverted by: " .. data.chartData.chartConverter
                 funky.SongPlayer.TopbarDifficulty = data.chartData.chartDifficulty
                 funky.SongPlayer.CountDown = true
+
                 
                 game:GetService("SoundService").ClientMusic.SoundId = data.chartData.loadedAudioID
                 funky.SongPlayer.CurrentlyPlaying = game:GetService("SoundService").ClientMusic
                 funky.SongPlayer:Countdown()
-                funky.SongPlayer.CurrentlyPlaying.Playing = true
+                funky.SongPlayer.CurrentlyPlaying:Play()
+                
+                
 
                 game.Players.LocalPlayer.Character.Torso.Anchored = true
 
@@ -414,14 +672,23 @@ function Chart(preventErrorLag)
                 repeat
                     wait()
                 until game.SoundService.ClientMusic.IsPlaying == false or funky.SongPlayer.CurrentSongData == nil
-                
+
+
                 if game.SoundService.ClientMusic.IsPlaying == false then
                     funky.SongPlayer:StopSong()
+                end
+
+                if data.underframe.enabled then
+                    task.spawn(function()
+                        functionHandler(manageUnderframe, "remove")
+                    end)
                 end
 
                 game.SoundService.ClientMusic.Playing = false
                 game.SoundService.ClientMusic.TimePosition = 0
                 game.Players.LocalPlayer.Character.Torso.Anchored = false
+
+                
 
                 console("Song done")
             end 
@@ -429,22 +696,61 @@ function Chart(preventErrorLag)
     end
 end
 
+function functionHandler(func, a1, a2, a3, a4, a5)
+    
+    a1 = a1 or nil
+    a2 = a2 or nil
+    a3 = a3 or nil
+    a4 = a4 or nil
+    a5 = a5 or nil
+
+
+    local erroredFunction
+    local additionalInfo = "Please report this!"
+
+    if func == loadChart then
+        status, errorDesc = pcall(func, a1, a2, a3)
+        erroredFunction = "Chart file (loadChart)"
+        additionalInfo = "Is this an older chart?"
+    elseif func == Chart then
+        status, errorDesc = pcall(func, a1)
+        erroredFunction = "Chart"
+    elseif func == Data then 
+        status, errorDesc = pcall(func, a1)
+        erroredFunction = "Data"
+    elseif func == manageUnderframe then 
+        status, errorDesc = pcall(func, a1, a2, a3, a4)
+        erroredFunction = "manageUnderframe" 
+    end
+
+    if not status then
+        Announce("A critical error occured!", errorDesc .. "\nIn function: ".. erroredFunction .. "\n" .. additionalInfo, 100, "error")
+        console("[CRITICAL ERROR] " .. errorDesc .. "\nIn function: ".. erroredFunction .. additionalInfo, "\n\n\n")
+    end
+
+    
+end
+
 
 function loadGUI()
     local Library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/accountrev/gui-libraries/main/kavo.lua')))()
 
-    local Window = Library.CreateLib("FunkyChart - v1.11", "GrapeTheme")
+    local Window = Library.CreateLib("FunkyChart - v1.12", "GrapeTheme")
 
     local Main = Window:NewTab("Main")
     local CurrentyLoadedSec = Main:NewSection("Currently Loaded: None - None")
 
     local ChartLoading = Window:NewTab("Chart Loading")
     local ChartSec = ChartLoading:NewSection("Chart Loading")
+    local ChartOverrideSec = ChartLoading:NewSection("Manual Override")
 
     local Options = Window:NewTab("Options")
     local GeneralSec = Options:NewSection("General")
     local GUISec = Options:NewSection("GUI")
     local OtherSec = Options:NewSection("Other")
+
+    local UnderframeTab = Window:NewTab("Underframe (WIP)")
+    local UnderframeSec = UnderframeTab:NewSection("Underframe")
 
     local KeyBinds = Window:NewTab("Keybinds")
     local KeyBindsSec = KeyBinds:NewSection("Keybinds")
@@ -458,10 +764,12 @@ function loadGUI()
     local Issues = Window:NewTab("Issues?")
 
     local PlayChartButton = CurrentyLoadedSec:NewButton("Play Chart", "Plays the chart you converted.", function()
-        status, errorDesc = pcall(Chart, errorLagBool)
-        if not status then
-            errorHandler(errorDesc)
-            game.Players.LocalPlayer.Character.Torso.Anchored = false
+        functionHandler(Chart, errorLagBool)
+    end)
+
+    local Test1 = CurrentyLoadedSec:NewButton("Test", "lol", function()
+        for i,v in pairs(data.chartData) do
+            print(i,v)
         end
     end)
 
@@ -482,12 +790,19 @@ function loadGUI()
     end)
 
     local LoadChartButton = ChartSec:NewButton("Load Chart", "Loads chart into your save data.", function()
-        status, errorDesc = pcall(loadChart, chartLink)
-        if not status then
-            errorHandler(errorDesc)
-            Announce("Older Chart?", "Remember, charts that were converted from an update in the past will not play and requires re-converting.", 10, "error")
-        end
+        functionHandler(loadChart, chartLink, false, true)
     end)
+
+
+    local ChartTextbox = ChartOverrideSec:NewTextBox("File Location", "Use this if your executor doesn't properly list charts.", function(txt)
+        chartLink = txt
+    end)
+
+    local LoadChartOverride = ChartOverrideSec:NewButton("Load Chart", "Loads chart into your save data.", function()
+        functionHandler(loadChart, chartLink, false, true)
+    end)
+
+
 
     local PreventErrorLagToggle = GeneralSec:NewToggle("Prevent Error Lag", "Prevents massive lagspikes from errors.", function(state)
         errorLagBool = state
@@ -503,34 +818,20 @@ function loadGUI()
     end)
 
     local ApplyGeneralButton = GeneralSec:NewButton("Apply Changes", "Applies your player side and offset changes.", function()
-        status, errorDesc = pcall(function()
-            loadChart(chartLink, true)
-        end)
-        if not status then
-            errorHandler(errorDesc)
-        end
+        functionHandler(loadChart, chartLink, true, true)
         console("Changes have been applied with time offset of " .. tostring(data.options.timeOffset) .. "and player side of " .. tostring(data.options.side))
         Announce("Changes Applied", "Time Offset: " .. tostring(data.options.timeOffset) .. "\nPlayer Side: " .. tostring(data.options.side), 10, "loaded")
     end)
 
     local ResetGeneralButton = GeneralSec:NewButton("Reset to Default", "Resets your player side and offset to default.", function()
-        status, errorDesc = pcall(function()
-            resetData("sideandoffset")
-            loadChart(chartLink, true)
-        end)
-        if not status then
-            errorHandler(errorDesc)
-        end
+        resetData("sideandoffset")
+        functionHandler(loadChart, chartLink, true, true)
         console("Changes have been applied with time offset of " .. tostring(data.options.timeOffset) .. "and player side of " .. tostring(data.options.side))
         Announce("Changes Applied", "Time Offset: " .. tostring(data.options.timeOffset) .. "\nPlayer Side: " .. tostring(data.options.side), 10, "loaded")
     end)
 
     local TitleSizeSlide = GUISec:NewSlider("Title Size", "Adjusts the size of the title while in-game.", 500, 0, function(s)
         game.Players.LocalPlayer.PlayerGui.GameUI.TopbarLabel.Size = UDim2.new(0.4, 0, 0, s)
-    end)
-
-    local ExtraUnderlayToggle = GUISec:NewToggle("Full Underlay", "Mimics osu!'s 100% Background Dim.", function(state)
-        game.Players.LocalPlayer.PlayerGui.GameUI.Arrows.ExtraUnderlay.Visible = state
     end)
 
     local PreventSickToggle = GUISec:NewToggle("Disable Sick! Judgement", "Hides the Sick! judgement.", function(state)
@@ -540,11 +841,40 @@ function loadGUI()
             game:GetService("ReplicatedStorage").Assets.UI.Templates.Hits.Sick.Image = "rbxassetid://6450258128"
         end
     end)
-    local ConsoleToggle = GUISec:NewToggle("Enable Debug Console", "Opens a console with more info.", function(state)
-        consoleEnabled = state
-    end)
+    
     local DeleteSaveButton = OtherSec:NewButton("DELETE SAVE", "Use this as a last resort.", function()
-        Data("w")
+        functionHandler(Data, "r")
+    end)
+
+    local SetEnabled = UnderframeSec:NewToggle("Enable Underframes", "Enables the underframe feature.", function(state)
+        data.underframe.enabled = state
+    end)
+
+    local SetOverride = UnderframeSec:NewToggle("Override Underframes", "Overrides every underframe when loading.", function(state)
+        data.underframe.override = state
+    end)
+
+    local UnderframeSelection = UnderframeSec:NewDropdown("Select Asset", "Assets go into workspace/FunkyChart/Assets.", {""}, function(selectedOpt)
+        data.underframe.overrideAdditionalID = getsynasset(selectedOpt)
+    end)
+
+    local UnderframeTypeSelection = UnderframeSec:NewDropdown("Select Type", "Select between type image or video.", {"image", "video", "none"}, function(selectedOpt)
+        data.underframe.overrideAdditionalIDType = selectedOpt
+    end)
+
+    local VideoLoopToggle = UnderframeSec:NewToggle("Video Looping?", "Loops overriden video.", function(state)
+        data.underframe.overrideVideoLoop = state
+    end)
+
+    local TransparencySlide = UnderframeSec:NewSlider("Transparency (WIP)", "", 1, 0, function(s)
+        if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Underframe") then
+            --game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Underframe").
+            return
+        end
+    end)
+
+    local refreshAssetsButton = UnderframeSec:NewButton("Refresh Assets", "Refreshes the asset list.", function()
+        UnderframeSelection:Refresh(listfiles("FunkyChart/Assets/"))
     end)
 
     local Credits1 = Credits:NewSection("Credits to:")
@@ -573,18 +903,29 @@ function loadGUI()
 
     
     ChartDropdown:Refresh(listfiles("FunkyChart/Charts/"))
+    UnderframeSelection:Refresh(listfiles("FunkyChart/Assets/"))
 
     RS.Heartbeat:Connect(function()
         CurrentyLoadedSec:UpdateSection("Currently Loaded: " .. data.chartData.chartName .. " - " .. data.chartData.chartAuthor)
+
+        if data.underframe.enabled then
+            UnderframeSec:UpdateSection("Underframe (Enabled)")
+        else
+            UnderframeSec:UpdateSection("Underframe (Disabled)")
+        end
     end)
 
 end
 
 function Init()
+    clearAllCurrentFCGuis()
     loadSetup()
-    Data("l")
 
+
+    functionHandler(Data, "l")
     loadGUI()
+
+    Announce("Script Loaded", "Welcome to FunkyChart!", 10, "main")
 end
 
 Init()
