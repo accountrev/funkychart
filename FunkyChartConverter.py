@@ -27,9 +27,13 @@
 
 """
 
-!!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
-!!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
-!!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
+
+[VERSION 1.12]
+
+-   Added support for underframes in this version (meaning youll have to reconvert again sorry)
+-   Added ability to select images, videos, or nothing when converting
+-   Underframes are a work in progress and are expected to break, so if any problems check the "Issues?" section in the GUI
+
 
 [VERSION 1.11]
 
