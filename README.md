@@ -1,4 +1,4 @@
-# FunkyChart for Lyte Interactive's Funky Friday (UPDATE COMING SOON)
+# FunkyChart for Lyte Interactive's Funky Friday (v1.2 COMING EARLY JULY)
 A fork of wally-rblx's [funky-friday-autoplayer](https://github.com/wally-rblx/funky-friday-autoplay).<br>
 Play your favorite 4-key osu!mania charts in Funky Friday with this epic script.<br><br>
 Supported for Synapse X and Krnl.<br>
