@@ -24,7 +24,7 @@ Just remember, this is all **client-sided and singleplayer**, meaning no one wil
 ### **[Tutorial on how to use FunkyChart and the converter (v1.2)](https://www.youtube.com/watch?v=NT3_AIzwsSg)**<br>
 ### **[Tutorial on how to use the Underframe feature in FunkyChart (v1.2)](https://www.youtube.com/watch?v=06MCZHsIotg)**<br><br>
 
-## Compilation
+## Compiling
 This section mainly focuses on how to compile the **converter** (aka the folder that is called "Converter" in this repo). **If you are just looking to download, [click here for the latest release.](https://github.com/accountrev/funkychart/releases/latest)**<br><br>
 The converter was written in Python 3.10.5, so be aware that the **converter will not be supported for Windows 7 and earlier** and I have no intentions of re-writing it for a older Python release.<br><br>
 Packages that are used by the converter are:
