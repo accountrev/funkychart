@@ -15,7 +15,7 @@ Supported for executors **[Synapse X](https://x.synapse.to/)** and **[Krnl](http
 
 ## Overview and Purpose
 This script allows you to fully convert an osu!mania beatmap into a Lua script that is readable by Roblox and Funky Friday's engine.<br>
-The osu!mania beatmap **can be 4K - 9K**. Anything lower will not work as it is not yet supported in Funky Friday.<br><br>
+The osu!mania beatmap **can be 4K - 9K**. Anything lower/higher will not work as it is not yet supported in Funky Friday.<br><br>
 When I used to be into VSRGs very religiously, this was my go-to game to play on Roblox. There was a point where I got tired of the same songs, so I noted this project down as a concept. A few months later, I was tinkering with wally-rblx's autoplayer (link above). I suddenly realized that [you can edit the notes when they load](https://youtu.be/FscazwnUDjk). So I set out to make this abombination that you see in front of you.<br><br>
 You can use this script to play songs for fun or practice, as Funky Friday's engine is very lenient when it comes to notes (and still is as of v1.2)<br><br>
 Just remember, this is all **client-sided and singleplayer**, meaning no one will be able to hear or see you play songs in-game. I may have a few ideas for multiplayer for the future.<br><br>
