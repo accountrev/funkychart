@@ -264,18 +264,18 @@ function versionCheck(versionString)
 end
 
 function checkIfFileExists(link)
-    if not isfile(link) then
-        return false
-    else
+    if isfile(link) then
         return true
+    else
+        return false
     end
 end
 
 function checkIfFolderExists(link)
-    if not isfolder(link) then
-        return false
-    else
+    if isfolder(link) then
         return true
+    else
+        return false
     end
 end
 
@@ -308,11 +308,13 @@ function loadSetup()
         return data.chartData.chartKeys
     end)
 
-    if #listfiles("FunkyChart/Audio/") ~= 0 then
-        if data.versions.synX then
-            game:GetService("Workspace").Map.FunctionalBuildings.Store.CafeZone.Attachment.CafeMusic.SoundId = getsynasset(listfiles("FunkyChart/Audio/")[math.random(#listfiles("FunkyChart/Audio/"))])
-        else
-            game:GetService("Workspace").Map.FunctionalBuildings.Store.CafeZone.Attachment.CafeMusic.SoundId = getcustomasset(listfiles("FunkyChart/Audio/")[math.random(#listfiles("FunkyChart/Audio/"))])
+    if checkIfFolderExists("FunkyChart/Audio/") then
+        if #listfiles("FunkyChart/Audio/") ~= 0 then
+            if data.versions.synX then
+                game:GetService("Workspace").Map.FunctionalBuildings.Store.CafeZone.Attachment.CafeMusic.SoundId = getsynasset(listfiles("FunkyChart/Audio/")[math.random(#listfiles("FunkyChart/Audio/"))])
+            else
+                game:GetService("Workspace").Map.FunctionalBuildings.Store.CafeZone.Attachment.CafeMusic.SoundId = getcustomasset(listfiles("FunkyChart/Audio/")[math.random(#listfiles("FunkyChart/Audio/"))])
+            end
         end
     end
 
