@@ -253,7 +253,7 @@ end
 function console(message, before)
     if data.options.console then
         before = before or ""
-        rconsoleprint(before .. "[FunkyChart] " .. message .. "\n")
+        rconsoleprint(before .. "[FunkyChart on " .. os.date("*t").hour .. ":" .. os.date("*t").min .. ":" .. os.date("*t").sec .. "] " .. message .. "\n")
     end
 end
 
