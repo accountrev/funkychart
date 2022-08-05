@@ -48,7 +48,7 @@
      / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_  
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/
-    v1.2
+    v1.21
     Made with ♥ by accountrevived          
 
     Hello again, and thanks for waiting. I just want to say that the amount of feedback that I've gotten over the past 6+
@@ -64,6 +64,9 @@
 
     !!! Please report any bugs/questions over on the Issues tab on GitHub, I will try to respond ASAP. !!!
 
+    [VERSION 1.21]
+    - Fixed a bug where playing a chart outside the stage will softlock the game.
+        - With this in mind, "Prevent Error Spam Lag" has been permanently enabled, and is not a toggle anymore.
 
     [VERSION 1.2]
 
@@ -702,6 +705,18 @@ function resetData(choice)
     end
 end
 
+function randomTPStage()
+    stagesArray = {}
+
+    for _,v in pairs(game:GetService("Workspace").Map.Stages:GetChildren()) do
+        table.insert(stagesArray, v)
+    end
+
+    local stagepos = stagesArray[math.random(#stagesArray)].Zone.CFrame
+
+    tweenMove(stagepos)
+end
+
 function Chart(preventErrorLag)
     preventErrorLag = preventErrorLag or false
     
@@ -724,20 +739,10 @@ function Chart(preventErrorLag)
         Announce("Load a song", "Load a song first in the Chart Loading menu.", 10, "error")
         return
     else
+        randomTPStage()
+
         console("[NOW PLAYING CHART - " .. data.chartData.chartName .. " WITH preventErrorLag = " .. tostring(preventErrorLag) .. "]", "\n\n")
         Announce("Now Loading", data.chartData.chartName .. " - " .. data.chartData.chartAuthor, 1, "loaded")
-
-        if preventErrorLag then
-            stagesArray = {}
-
-            for _,v in pairs(game:GetService("Workspace").Map.Stages:GetChildren()) do
-                table.insert(stagesArray, v)
-            end
-
-            local stagepos = stagesArray[math.random(#stagesArray)].Zone.CFrame
-
-            tweenMove(stagepos)
-        end
 
         framework.SongPlayer:StartSong(chartKeyMaps[tostring(data.chartData.chartKeys)][1], data.options.side, chartKeyMaps[tostring(data.chartData.chartKeys)][2], {game.Players.LocalPlayer})
 
@@ -1048,13 +1053,6 @@ function loadGUI()
 		title = "Load Chart",
 		callback = function()
 			functionHandler(loadChart, chartLink, false, true, songDetailsDrop)
-		end
-	})
-
-	local errorLagToggle = optSecGameplay:addToggle({
-		title = "Prevent Error Spam Lag",
-		callback = function(value)
-			errorLagBool = value
 		end
 	})
 
@@ -1446,7 +1444,7 @@ function loadGUI()
         list = {data.chartData.chartName .. " - " .. data.chartData.chartAuthor, "Difficulty: " .. data.chartData.chartDifficulty, tostring(data.chartData.chartKeys) .. "-key chart", "Has " .. #data.chartData.chartNotes .. " notes", "Underframe = " .. tostring(data.underframe.enabled)}
     })
 
-    library.setTitle(venyx, "FunkyChart v1.2 (" .. splashes[math.random(#splashes)] .. ")")
+    library.setTitle(venyx, "FunkyChart v1.21 (" .. splashes[math.random(#splashes)] .. ")")
     
     Announce("Script Loaded", "Welcome to FunkyChart!", 10, "main")
 end
