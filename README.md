@@ -1,4 +1,4 @@
-# FunkyChart for Lyte Interactive's Funky Friday (Knrl broken)
+# FunkyChart for Lyte Interactive's Funky Friday (Krnl broken)
 ## WARNING!
 ### You are responsible for your own actions. Exploiting violates Roblox's Community Standards. By using FunkyChart or any of my scripts, you agree that you are responsible for any punishments that can be held on your account, which includes bans (platform or in-game), account terminations, data wipes, etc. Using FunkyChart in a private environment and on a seperate Roblox account.<br>
 ##
