@@ -48,7 +48,7 @@ Enjoy!
         ______            __         ________               __ 
        / ____/_  ______  / /____  __/ ____/ /_  ____ ______/ /_
       / /_  / / / / __ \/ //_/ / / / /   / __ \/ __ `/ ___/ __/     Converter
-     / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_       Version 1.2
+     / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_       Version 1.22
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/                              
 
@@ -75,9 +75,9 @@ Enjoy!
     This version is running on Python 3.10.5
 
     Packages installed:
-    colorama
-    requests
-    pyinstaller (compiler)
+    - colorama
+    - requests
+    - pyinstaller (compiler)
 
     -----------
 
@@ -98,73 +98,7 @@ Enjoy!
 
 
 
-
-
-
-
-
     !!! Please report any bugs/questions over on the Issues tab on GitHub !!!
-
-    [VERSION 1.2]
-
-    -   The converter finally gets a necessary re-write!
-    -   Added support for 5K, 6K, 7K, 8K, and 9K maps
-    -   The converter now requires you to show FunkyChart folder instead of selecting multiple folders for saving the audio and chart.
-    -   The converter now checks if the GitHub servers are working or not (just in case if GitHub goes down, the converter is still usable)
-    -   The converter now checks if the osu! client is installed on the default location (being %APPDATA%\Local\osu!) (if you are suspicious, take a look at the code)
-        -   Allows for immediate access to the osu! folder when selecting a chart. If osu! not found then go back to C drive
-
-
-
-    -------------------------------------------------
-
-    [VERSION 1.11]
-
-    -   Made major changes to chart converting again (all chart before 1.11 are again invalid lol)
-    -   Added a feature where you can now name the chart file when converting!
-    -   Added a waiting screen when converting (this is to make people not click too early when its converting).
-
-
-
-    [VERSION 1.1]
-
-    -   Made major changes to chart converting (all charts before 1.1 are now invalid, sorry :( )
-    -   Fixed a bug with file path directory erroring out
-    -   Cleaned up title (not really just added verison as a variable lol)
-
-    -------------------------------------------------
-
-    [VERSION 1.05]
-
-    -   Added update notifier for future updates.
-    -   _G.customChart.loadedAudioID does not use getcustomasset or getsynasset anymore, will be done in-game.
-
-
-    [VERSION 1.04]
-
-    -   Testing support for the Krnl executor
-
-    [VERSION 1.03]
-
-    -   Fixed an issue with file saving where the converted chart couldn't save correctly. Haha...
-
-    [VERSION 1.02]
-
-    -   Fixed an error where the colorama module was not found.
-    -   Made it so that the Tk window does not pop up everytime it asks for a file.
-    -   Fixed an error when you copy an audio file and place it in the same folder (SameFileError).
-
-    [VERSION 1.01 - DELAYED]
-
-    -   Delayed released due to Roblox's audio privacy update.
-    -   Rewritten the program, commenting Krnl references and online mode.
-    -   Other fixes
-
-    [VERSION 1.0 - INITIAL RELEASE]
-
-    -   Initial release
-    -   Rewrote some lines for the 4v4 update on FF before release.
-    -   Organization
 
 
 """
@@ -188,8 +122,8 @@ hiddenWindow.withdraw()
 
 
 
-version = 'v1.2'
-loadingVersion = 'v1.2'
+version = 'v1.22'
+receivingVersion = 'v1.22'
 
 splash = r'''    ______            __         ________               __     ______                           __           
    / ____/_  ______  / /____  __/ ____/ /_  ____ ______/ /_   / ____/___  ____ _   _____  _____/ /____  _____
@@ -643,7 +577,7 @@ def createChart():
         # Beginning of the file - puts info about the chart (name, author, difficulty, etc.)
         file.writelines([
 
-            "data.versions.loadingVersion = \"" + loadingVersion + "\"\n\n",
+            "data.versions.receivingVersion = \"" + receivingVersion + "\"\n\n",
 
             "data.chartData.chartName = [[" + outputedChartDetails['chartName'] + "]]\n",
 
@@ -715,6 +649,7 @@ def createChart():
         cprint('Saved to the FunkyChart folder!\nPress the "A" button to exit.')
 
         closeKey = keySystem('a')
+
         match closeKey:
             case 'a':
                 sys.exit(0)
