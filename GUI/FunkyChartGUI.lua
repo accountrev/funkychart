@@ -280,7 +280,7 @@ function initSetup()
 
     for _,v in pairs(workspace.Map.FunctionalBuildings.Store.Fanart:GetDescendants()) do
         if v:IsA("Texture") then
-            v.Texture = "rbxassetid://460729827"
+            v.Texture = "rbxassetid://460729824"
         end
     end
 
