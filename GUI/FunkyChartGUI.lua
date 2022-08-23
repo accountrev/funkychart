@@ -67,8 +67,6 @@
 
 --]]
 
-_G.venyxID = ""
-
 -- Agreement variable
 accept = false
 
@@ -185,7 +183,7 @@ data = {
 -- Exits FunkyChart, and destroys the console
 function Exit()
     consoleWindow:Kill()
-	coreGui[_G.venyxID]:Destroy()
+	venyx.container:Destroy()
 end
 
 
@@ -199,12 +197,12 @@ function checkForAgreement()
         if accept then
             return
         else
-            coreGui[_G.venyxID]:Destroy()
+            venyx.container:Destroy()
             loadstring(game:HttpGet(('https://raw.githubusercontent.com/accountrev/funkychart/main/GUI/FunkyChartAgreement.lua')))()
             return
         end
     else
-        coreGui[_G.venyxID]:Destroy()
+        venyx.container:Destroy()
         loadstring(game:HttpGet(('https://raw.githubusercontent.com/accountrev/funkychart/main/GUI/FunkyChartAgreement.lua')))()
         return
     end

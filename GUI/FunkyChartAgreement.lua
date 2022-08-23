@@ -27,7 +27,7 @@ local agree = secEULA:addButton({
             print("No save function found. Could not accept.")
         end
 
-        coreGui[_G.venyxID]:Destroy()
+        venyx.container:Destroy()
     end
 })
 
