@@ -23,11 +23,19 @@ local agree = secEULA:addButton({
         if (writefile) then
             local json = game:GetService("HttpService"):JSONEncode(accept)
             writefile("FunkyChartAgreement.txt", json)
+
+            START:SetCore("ChatMakeSystemMessage", {
+                Text = "Re-execute FunkyChart to continue.",
+                Color = Color3.fromRGB(255, 255, 255),
+                TextSize = 25
+            })
         else
             print("No save function found. Could not accept.")
+            return
         end
 
         venyx.container:Destroy()
+        
     end
 })
 
