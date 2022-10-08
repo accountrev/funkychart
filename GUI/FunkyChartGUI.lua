@@ -61,10 +61,6 @@
     
 
 
-
-
-
-
 --]]
 
 -- Agreement variable
