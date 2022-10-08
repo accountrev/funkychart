@@ -48,7 +48,7 @@ Enjoy!
         ______            __         ________               __ 
        / ____/_  ______  / /____  __/ ____/ /_  ____ ______/ /_
       / /_  / / / / __ \/ //_/ / / / /   / __ \/ __ `/ ___/ __/     Converter
-     / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_       Version 1.22
+     / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_       Version 1.23
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/                              
 
@@ -122,8 +122,8 @@ hiddenWindow.withdraw()
 
 
 
-version = 'v1.22'
-receivingVersion = 'v1.22'
+version = 'v1.23'
+receivingVersion = 'v1.23'
 
 splash = r'''    ______            __         ________               __     ______                           __           
    / ____/_  ______  / /____  __/ ____/ /_  ____ ______/ /_   / ____/___  ____ _   _____  _____/ /____  _____
@@ -216,6 +216,10 @@ def warn(text):
 
 def error(text):
     print(textColors['r'] + text + textColors['w'])
+
+# Thanks geeksforgeeks
+def closest(keyList, num):
+    return keyList[min(range(len(keyList)), key = lambda i: abs(keyList[i]-num))]
 
 
 def setOsuCheck(check, boolean):
@@ -603,7 +607,8 @@ def createChart():
             hitObject = filterSound(note.strip("\n").replace(":", ",").split(","))
 
             if hitObject[0] not in noteLocations[outputedChartDetails["chartKeys"]].keys():
-                continue
+                tempList1 = [int(i) for i in list(noteLocations[outputedChartDetails["chartKeys"]].keys())]
+                hitObject[0] = str(closest(tempList1, int(hitObject[0])))
 
 
             # Normal Note

@@ -251,6 +251,32 @@ function getChartKeyAmount()
     return data.chartData.chartKeys
 end
 
+function doEasterEgg()
+    for i,v in pairs(game:GetService("Workspace").Map.Props:GetDescendants()) do
+        if v:IsA("TextLabel") then
+            if v.Text == "Brookhaven Rd" then
+                v.Text = "Thanks for using"
+            elseif v.Text == "Critical St" then
+                v.Text = "FunkyChart <3"
+            end
+        end
+    end
+
+    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.FunnyCat.Model.main.Beam.Texture = "rbxassetid://10586151186"
+
+    for i,v in pairs(game:GetService("Workspace").Map.FunctionalBuildings.RotundTower.Exterior:GetDescendants()) do
+        if v:IsA("Beam") then
+            if v.Texture == "rbxassetid://11197878188" or v.Texture == "rbxassetid://11197888064" then
+                v.Texture = "rbxassetid://10590477428"
+            end
+        end
+    end
+
+    game:GetService("Workspace").Map.FunctionalBuildings.RotundTower.Exterior.CatMemeSign.Main.Beam.Texture = "rbxassetid://10732694360"
+    game:GetService("Workspace").Map.FunctionalBuildings.CheeseShop.ScrollingHoloDisplay.Main.Beam.Texture = "rbxassetid://10761715973"
+    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.CatMemeSign.Main.Beam.Texture = "rbxassetid://"
+end
+
 
 -- Initializes FunkyChart setup.
 function initSetup()
@@ -272,15 +298,7 @@ function initSetup()
         return getChartKeyAmount()
     end)
 
-    if checkIfFolderExists("FunkyChart/Audio/") then
-        workspace.Map.FunctionalBuildings.Store.CafeZone.Attachment.CafeMusic.SoundId = getlocalasset(listfiles("FunkyChart/Audio/")[math.random(#listfiles("FunkyChart/Audio/"))])
-    end
-
-    for _,v in pairs(workspace.Map.FunctionalBuildings.Store.Fanart:GetDescendants()) do
-        if v:IsA("Texture") then
-            v.Texture = "rbxassetid://460729824"
-        end
-    end
+    functionHandler(doEasterEgg)
 
 end
 
@@ -715,7 +733,11 @@ function functionHandler(func, a1, a2, a3)
         erroredFunction = "Data function. Check the console for more details."
     elseif func == manageUnderframe then 
         status, errorDesc = pcall(func, a1)
-        erroredFunction = "manageUnderframe function. Check the console for more details." 
+        erroredFunction = "manageUnderframe function. Check the console for more details."
+    elseif func == doEasterEgg then 
+        status, errorDesc = pcall(func)
+        erroredFunction = "doEasterEgg function. Check the console for more details."
+        additionalInfo = " This probably means the map has been changed. Please report this!"
     end
 
     if not status then
