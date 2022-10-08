@@ -1,4 +1,4 @@
-# FunkyChart for Lyte Interactive's Funky Friday (v1.22)
+# FunkyChart for Lyte Interactive's Funky Friday (v1.23)
 ## WARNING!
 ### You are responsible for your own actions. Exploiting violates Roblox's Community Standards. By using FunkyChart or any of my scripts, you agree that you are responsible for any punishments that can be held on your account, which includes bans (platform or in-game), account terminations, data wipes, etc. Using FunkyChart in a private environment and on a seperate Roblox account.<br>
 ##
