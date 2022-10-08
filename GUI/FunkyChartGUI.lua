@@ -48,7 +48,7 @@
      / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_  
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/
-    v1.22
+    v1.23
     Made with ♥ by accountrevived          
 
     Hello again, and thanks for waiting. I just want to say that the amount of feedback that I've gotten over the past 6+
@@ -137,7 +137,7 @@ end
 data = {
     versions = {
         acceptingVersions = {
-            "v1.22"
+            "v1.23"
         },
         receivingVersion = "",
         saveDataVersion = "3"
@@ -274,7 +274,7 @@ function doEasterEgg()
 
     game:GetService("Workspace").Map.FunctionalBuildings.RotundTower.Exterior.CatMemeSign.Main.Beam.Texture = "rbxassetid://10732694360"
     game:GetService("Workspace").Map.FunctionalBuildings.CheeseShop.ScrollingHoloDisplay.Main.Beam.Texture = "rbxassetid://10761715973"
-    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.CatMemeSign.Main.Beam.Texture = "rbxassetid://"
+    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.CatMemeSign.Main.Beam.Texture = "rbxassetid://11215331752"
 end
 
 
@@ -876,8 +876,7 @@ function loadGUI()
         "Mai-san my beloved",
         "Now with 99% spaghetti code!",
         "Plz give free points",
-        "v1.3 coming never",
-        "Technoblade never dies",
+        "v1.3 coming never?",
         "A critical error occured!",
         "I am in genuine pain",
         "Killing fingers, one chart at a time",
@@ -889,14 +888,14 @@ function loadGUI()
         "4",
         "I hate my life",
         "HIT MOAR NOTES",
-        "STANDING HERE I REALIZE",
         "soup",
         "Mike",
         "lyte please fix 0 second notes!!!!",
         "touhou underrated",
 		"SYNAPSE ROCKS!!!!",
         "pls stop crashing",
-        "Unfortunately, Synapse X has crashed."
+        "Unfortunately, Synapse X has crashed.",
+        "lyte pls stop breaking my scripts"
     }
 
 	local songDetailsDrop = mainSecPlayChart:addDropdown({
@@ -1369,7 +1368,7 @@ function loadGUI()
         list = {"Load a chart to show its data."}
     })
 
-    GUILib.setTitle(venyx, "FunkyChart v1.22 (" .. splashes[math.random(#splashes)] .. ")")
+    GUILib.setTitle(venyx, "FunkyChart v1.23 (" .. splashes[math.random(#splashes)] .. ")")
     
     Noti("Script Loaded", "Welcome to FunkyChart!", "main")
 end
