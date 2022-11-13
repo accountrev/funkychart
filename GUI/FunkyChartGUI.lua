@@ -48,7 +48,7 @@
      / __/ / /_/ / / / / ,< / /_/ / /___/ / / / /_/ / /  / /_  
     /_/    \__,_/_/ /_/_/|_|\__, /\____/_/ /_/\__,_/_/   \__/  
                            /____/
-    v1.23
+    v1.23 (LTS)
     Made with ♥ by accountrevived          
 
     Hello again, and thanks for waiting. I just want to say that the amount of feedback that I've gotten over the past 6+
@@ -888,10 +888,11 @@ function loadGUI()
         "Mike",
         "lyte please fix 0 second notes!!!!",
         "touhou underrated",
-		"SYNAPSE ROCKS!!!!",
+	"SYNAPSE ROCKS!!!!",
         "pls stop crashing",
         "Unfortunately, Synapse X has crashed.",
-        "lyte pls stop breaking my scripts"
+        "lyte pls stop breaking my scripts",
+	"Thanks for supporting FunkyChart"
     }
 
 	local songDetailsDrop = mainSecPlayChart:addDropdown({
@@ -1308,17 +1309,6 @@ function loadGUI()
         end
 	})
 
-	local githubIssuesButton = issueSec:addButton({
-		title = "Report on GitHub",
-		callback = function()
-			setclipboard("https://github.com/accountrev/funkychart/issues")
-			venyx:Notify({
-				text = "Copied link to clipboard.",
-				title = "Link Copied"
-			})
-		end
-	})
-
 	local discordIDButton = issueSec:addButton({
 		title = "Copy Discord ID",
 		callback = function()
@@ -1364,7 +1354,7 @@ function loadGUI()
         list = {"Load a chart to show its data."}
     })
 
-    GUILib.setTitle(venyx, "FunkyChart v1.23 (" .. splashes[math.random(#splashes)] .. ")")
+    GUILib.setTitle(venyx, "FunkyChart v1.23 LTS (" .. splashes[math.random(#splashes)] .. ")")
     
     Noti("Script Loaded", "Welcome to FunkyChart!", "main")
 end
