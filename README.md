@@ -1,4 +1,13 @@
-# FunkyChart for Lyte Interactive's Funky Friday (v1.23)
+# FunkyChart for Lyte Interactive's Funky Friday (Long Term Support)
+## Note:
+### FunkyChart will no longer receive any major updates anymore, except for minor updates which would fix any issues that Lyte Interactive may cause.
+Thank you all for your support over these past months. I have decided to move on from this project and possibly the Roblox platform as a whole, as I try
+to pursue other projects and goals.
+
+Contact me on Discord for issues (id below).
+
+<b>With <3,<br>- AccountRevived</b>
+
 ## WARNING!
 ### You are responsible for your own actions. Exploiting violates Roblox's Community Standards. By using FunkyChart or any of my scripts, you agree that you are responsible for any punishments that can be held on your account, which includes bans (platform or in-game), account terminations, data wipes, etc. Using FunkyChart in a private environment and on a seperate Roblox account.<br>
 ##
@@ -40,7 +49,3 @@ Any questions, shoot me a message on Discord or report it here on the Issues tab
 
 ## Contact Me!
 ### My Discord: accountrevived#0686
-
-
-
-
