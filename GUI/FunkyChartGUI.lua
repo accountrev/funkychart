@@ -257,20 +257,6 @@ function doEasterEgg()
             end
         end
     end
-
-    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.FunnyCat.Model.main.Beam.Texture = "rbxassetid://10586151186"
-
-    for i,v in pairs(game:GetService("Workspace").Map.FunctionalBuildings.RotundTower.Exterior:GetDescendants()) do
-        if v:IsA("Beam") then
-            if v.Texture == "rbxassetid://11197878188" or v.Texture == "rbxassetid://11197888064" then
-                v.Texture = "rbxassetid://10590477428"
-            end
-        end
-    end
-
-    game:GetService("Workspace").Map.FunctionalBuildings.RotundTower.Exterior.CatMemeSign.Main.Beam.Texture = "rbxassetid://10732694360"
-    game:GetService("Workspace").Map.FunctionalBuildings.CheeseShop.ScrollingHoloDisplay.Main.Beam.Texture = "rbxassetid://10761715973"
-    game:GetService("Workspace").Map.FunctionalBuildings.BigAdBuilding.CatMemeSign.Main.Beam.Texture = "rbxassetid://11215331752"
 end
 
 
