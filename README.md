@@ -1,5 +1,5 @@
 # FunkyChart for Lyte Interactive's Funky Friday (Archived)
-## Note:
+## PLEASE READ:
 ### FunkyChart will no longer receive any major updates nor bugfixes.
 I have moved away from the Roblox exploiting scene. With executor developers currently trying to reverse-engineer the Hyperion anticheat and update to Roblox x64, I have not been able to get access back to my main executor, meaning I haven't been able to fix anything for the past month so I call quits. As I move on to a new chapter in life, thank you for the support on this project. It was worth the 20 dollars.
 
