@@ -37,8 +37,8 @@ Just remember, this is all **client-sided and singleplayer**, meaning no one wil
 This section mainly focuses on how to compile the **converter** (aka the folder that is called "Converter" in this repo). **If you are just looking to download, [click here for the latest release.](https://github.com/accountrev/funkychart/releases/latest)**<br><br>
 The converter was written in Python 3.10.5, so be aware that the **converter will not be supported for Windows 7 and earlier** and I have no intentions of re-writing it for a older Python release.<br><br>
 Packages that are used by the converter are:
-* colorama
-* requests
+* colorama (pretty print)
+* requests (to access GitHub API)
 * pyinstaller (for compilation)
 <br><br>
 
