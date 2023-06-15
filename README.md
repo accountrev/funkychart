@@ -6,6 +6,7 @@ I have moved away from the Roblox exploiting scene. With executor developers cur
 Contact me on Discord if you have a question (@accountrev).
 
 <b>With <3,<br>- AccountRevived</b>
+<br><br><br><br>
 
 ## WARNING!
 ### You are responsible for your own actions. Exploiting violates Roblox's Community Standards. By using FunkyChart or any of my scripts, you agree that you are responsible for any punishments that can be held on your account, which includes bans (platform or in-game), account terminations, data wipes, etc. Using FunkyChart in a private environment and on a seperate Roblox account.<br>
