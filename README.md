@@ -1,10 +1,9 @@
-# FunkyChart for Lyte Interactive's Funky Friday (Long Term Support)
+# FunkyChart for Lyte Interactive's Funky Friday (Archived)
 ## Note:
-### FunkyChart will no longer receive any major updates anymore, except for minor updates which would fix any issues that Lyte Interactive may cause.
-Thank you all for your support over these past months. I have decided to move on from this project and possibly the Roblox platform as a whole, as I try
-to pursue other projects and goals.
+### FunkyChart will no longer receive any major updates nor bugfixes.
+I have moved away from the Roblox exploiting scene. With executor developers currently trying to reverse-engineer the Hyperion anticheat and update to Roblox x64, I have not been able to get access back to my main executor, meaning I haven't been able to fix anything for the past month so I call quits. As I move on to a new chapter in life, thank you for the support on this project. It was worth the 20 dollars.
 
-Contact me on Discord for issues (id below).
+Contact me on Discord if you have a question (@accountrev).
 
 <b>With <3,<br>- AccountRevived</b>
 
@@ -48,4 +47,4 @@ When it's done compiling, the executable file should be in the same folder under
 Any questions, shoot me a message on Discord or report it here on the Issues tab.<br><br>
 
 ## Contact Me!
-### My Discord: accountrevived#0686
+### My Discord: @accountrev
